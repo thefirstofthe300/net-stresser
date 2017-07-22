@@ -43,26 +43,26 @@ def main():
             p = mp.Process(target=run_iperf_server, args=(5001 + i,))
             p.start()
             processes.append(p)
-        p = mp.Process(target=run_ping, args=(args.host))
+        p = mp.Process(target=run_ping, args=(args.host,))
         p.start()
         processes.append(p)
     
-    timer = 0
-    while(timer < args.duration):
-        alive_processes = 0
-        for i in range(len(processes)):
-            if not processes[i].is_alive():
-                del processes[i]
-                length = randint(1, 9)
-                p = mp.Process(target=run_iperf_client, args=(args.host, length, 5001 + i))
-                p.start()
-                processes.insert(i, p)
-            else:
-                alive_processes += 1
+        timer = 0
+        while(timer < args.duration):
+            alive_processes = 0
+            for i in range(len(processes)):
+                if not processes[i].is_alive():
+                    del processes[i]
+                    length = randint(1, 9)
+                    p = mp.Process(target=run_iperf_client, args=(args.host, length, 5001 + i))
+                    p.start()
+                    processes.insert(i, p)
+                else:
+                    alive_processes += 1
         
-        print "Alive processes:", alive_processes, "Started", args.ports - alive_processes, "processes."
-        timer += 5
-        time.sleep(5)
+            print "Alive processes:", alive_processes, "Started", args.ports - alive_processes, "processes."
+            timer += 5
+            time.sleep(5)
     
     
 if __name__ == '__main__':
