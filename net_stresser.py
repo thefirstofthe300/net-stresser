@@ -55,7 +55,7 @@ def main():
             alive_processes = 0
             started_processes = 0
             for i in range(len(processes)):
-                if not processes[i].is_alive():
+                if processes[i].is_alive():
                     alive_processes += 1
                 elif timer % 5 == 0:
                     del processes[i]
