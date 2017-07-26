@@ -37,7 +37,7 @@ def run_ping_server(host):
 
 
 def calculate_mb_max_bandwidth(processes, bandwidth):
-    return 8 * processes * bandwidth
+    return (8 * processes * bandwidth) / 1000
 
 def main():
     processes = []
