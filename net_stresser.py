@@ -16,7 +16,7 @@ parser.add_argument('--server', dest="server", action="store_true")
 args = parser.parse_args()
 
 def run_iperf_client(host, duration, port):
-    iperf_cmd = '/usr/bin/iperf -c {0} -t {1} -p {2} --reportstyle=c'.format(host, duration, port)
+    iperf_cmd = '/usr/bin/trickle -u 62500 -d 62500 iperf -c {0} -t {1} -p {2} --reportstyle=c'.format(host, duration, port)
     subprocess.check_call(iperf_cmd.split())
     
 def run_iperf_server(port):
@@ -45,19 +45,22 @@ def main():
         
         while(timer < args.duration):
             alive_processes = 0
+            started_processes = 0
             for i in range(len(processes)):
                 if not processes[i].is_alive():
+                    alive_processes += 1
+                elif timer % 5 == 0:
                     del processes[i]
                     length = randint(1, 9)
                     p = mp.Process(target=run_iperf_client, args=(args.host, length, 5001 + i))
                     p.start()
                     processes.insert(i, p)
-                else:
-                    alive_processes += 1
+                    started_processes += 1
+            print "Alive processes:", alive_processes
+            print "Started", started_processes, "processes."
         
-            print "Alive processes:", alive_processes, "Started", args.ports - alive_processes, "processes."
-            timer += 5
-            time.sleep(5)
+            timer += 1
+            time.sleep(1)
     else:
         for i in range(args.ports):
             p = mp.Process(target=run_iperf_server, args=(5001 + i,))
