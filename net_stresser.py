@@ -35,6 +35,10 @@ def run_ping_server(host):
     ping_cmd = '/bin/ping {0}'.format(host)
     subprocess.check_call(ping_cmd.split())
 
+
+def calculate_mb_max_bandwidth(processes, bandwidth):
+    return 8 * processes * bandwidth
+
 def main():
     processes = []
     if args.server is False:
@@ -62,6 +66,7 @@ def main():
                     started_processes += 1
             print "Alive processes:", alive_processes
             print "Started", started_processes, "processes."
+            print "Max bandwidth:", calculate_mb_max_bandwidth(alive_processes, args.bandwidth), "Mb/s"
         
             timer += 1
             time.sleep(1)
